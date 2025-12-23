@@ -22,6 +22,7 @@ class MainMenuActivity : AppCompatActivity() {
     private var selectedBoardSize = 4
     private var selectedAIDifficulty = AIDifficulty.NORMAL
     private var selectedModPool = ModPool.NORMAL
+    private var selectedModCount = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,11 +32,12 @@ class MainMenuActivity : AppCompatActivity() {
         setupBoardSizeSelector()
         setupDifficultySelector()
         setupModPoolSelector()
+        setupModCountSelector()
         setupButtons()
     }
 
     private fun setupBoardSizeSelector() {
-        val sizes = arrayOf("3×3 Classic", "4×4 Extended")
+        val sizes = arrayOf("3×3 Classic", "4×4 Extended", "5×5 Epic")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, sizes)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.boardSizeSpinner.adapter = adapter
@@ -43,7 +45,11 @@ class MainMenuActivity : AppCompatActivity() {
         
         binding.boardSizeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                selectedBoardSize = if (position == 0) 3 else 4
+                selectedBoardSize = when (position) {
+                    0 -> 3
+                    1 -> 4
+                    else -> 5
+                }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
@@ -78,6 +84,20 @@ class MainMenuActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupModCountSelector() {
+        val counts = arrayOf("1 Mod", "2 Mods (Stacked)", "3 Mods (Chaos!)")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, counts)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.modCountSpinner.adapter = adapter
+        
+        binding.modCountSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                selectedModCount = position + 1
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+    }
+
     private fun setupButtons() {
         binding.playVsAiButton.setOnClickListener {
             startGame(GameMode.VS_AI)
@@ -106,6 +126,7 @@ class MainMenuActivity : AppCompatActivity() {
             putExtra(EXTRA_BOARD_SIZE, selectedBoardSize)
             putExtra(EXTRA_AI_DIFFICULTY, selectedAIDifficulty.name)
             putExtra(EXTRA_MOD_POOL, selectedModPool.name)
+            putExtra(EXTRA_MOD_COUNT, selectedModCount)
         }
         startActivity(intent)
     }
@@ -123,5 +144,6 @@ class MainMenuActivity : AppCompatActivity() {
         const val EXTRA_BOARD_SIZE = "board_size"
         const val EXTRA_AI_DIFFICULTY = "ai_difficulty"
         const val EXTRA_MOD_POOL = "mod_pool"
+        const val EXTRA_MOD_COUNT = "mod_count"
     }
 }

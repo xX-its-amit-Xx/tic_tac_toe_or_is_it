@@ -4,10 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tictactoe.orisit.engine.GameEngine
 import com.tictactoe.orisit.engine.GameEvent
+import com.tictactoe.orisit.model.AIDifficulty
 import com.tictactoe.orisit.model.Cell
+import com.tictactoe.orisit.model.GameMode
 import com.tictactoe.orisit.model.GameState
 import com.tictactoe.orisit.model.MatchConfig
 import com.tictactoe.orisit.model.ModEffect
+import com.tictactoe.orisit.model.ModPool
 import com.tictactoe.orisit.mod.IMod
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,9 +34,33 @@ class GameViewModel : ViewModel() {
     private val _uiEvents = MutableSharedFlow<UiEvent>()
     val uiEvents: SharedFlow<UiEvent> = _uiEvents.asSharedFlow()
 
+    // Configuration from intent
+    private var configuredBoardSize = 3
+    private var configuredGameMode = GameMode.VS_AI
+    private var configuredAIDifficulty = AIDifficulty.NORMAL
+    private var configuredModPool = ModPool.NORMAL
+    private var configuredModCount = 1
+    private var isInitialized = false
+
     init {
         observeGameState()
         observeGameEvents()
+    }
+
+    fun initialize(
+        boardSize: Int = 3,
+        gameMode: GameMode = GameMode.VS_AI,
+        aiDifficulty: AIDifficulty = AIDifficulty.NORMAL,
+        modPool: ModPool = ModPool.NORMAL,
+        modCount: Int = 1
+    ) {
+        if (isInitialized) return
+        isInitialized = true
+        configuredBoardSize = boardSize
+        configuredGameMode = gameMode
+        configuredAIDifficulty = aiDifficulty
+        configuredModPool = modPool
+        configuredModCount = modCount
         startNewGame()
     }
 
@@ -85,7 +112,15 @@ class GameViewModel : ViewModel() {
     }
 
     fun startNewGame() {
-        engine.startNewMatch(MatchConfig.generate())
+        val config = MatchConfig.generate(
+            boardSize = configuredBoardSize,
+            winCondition = configuredBoardSize,
+            gameMode = configuredGameMode,
+            aiDifficulty = configuredAIDifficulty,
+            modPool = configuredModPool,
+            modCount = configuredModCount
+        )
+        engine.startNewMatch(config)
     }
 
     fun onCellClicked(cell: Cell) {

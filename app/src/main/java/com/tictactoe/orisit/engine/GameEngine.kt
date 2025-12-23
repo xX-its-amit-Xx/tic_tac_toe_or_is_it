@@ -159,14 +159,35 @@ class GameEngine {
     private fun checkModActivation(state: GameState, config: MatchConfig): GameState {
         if (!state.modActivated && state.turnCount >= config.modActivationTurn) {
             _events.value = GameEvent.ModActivated(config.mod)
-            return config.mod.onActivate(state)
+            
+            // Activate all stacked mods
+            var activatedState = state
+            for (mod in config.getAllMods()) {
+                activatedState = mod.onActivate(activatedState)
+            }
+            return activatedState
         }
         return state
     }
 
     private fun applyModEffects(state: GameState, config: MatchConfig): Pair<GameState, ModEffect?> {
         if (!state.modActivated) return Pair(state, null)
-        return config.mod.onTurnEnd(state)
+        
+        // Apply all stacked mods in sequence
+        var currentState = state
+        var lastEffect: ModEffect? = null
+        
+        for (mod in config.getAllMods()) {
+            val (newState, effect) = mod.onTurnEnd(currentState)
+            currentState = newState
+            if (effect != null) {
+                lastEffect = effect
+                // Emit effect for each mod that triggers
+                _events.value = GameEvent.ModEffectApplied(effect)
+            }
+        }
+        
+        return Pair(currentState, lastEffect)
     }
 
     private fun checkGameEnd(state: GameState): GameState {

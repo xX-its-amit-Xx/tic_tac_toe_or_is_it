@@ -11,7 +11,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.tictactoe.orisit.R
 import com.tictactoe.orisit.databinding.ActivityMainBinding
+import com.tictactoe.orisit.model.AIDifficulty
+import com.tictactoe.orisit.model.GameMode
 import com.tictactoe.orisit.model.ModEffect
+import com.tictactoe.orisit.model.ModPool
 import com.tictactoe.orisit.mod.GravityMod
 import com.tictactoe.orisit.mod.IMod
 import com.tictactoe.orisit.mod.MutationMod
@@ -28,6 +31,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Get configuration from intent
+        val boardSize = intent.getIntExtra(MainMenuActivity.EXTRA_BOARD_SIZE, 3)
+        val gameModeName = intent.getStringExtra(MainMenuActivity.EXTRA_GAME_MODE) ?: GameMode.VS_AI.name
+        val aiDifficultyName = intent.getStringExtra(MainMenuActivity.EXTRA_AI_DIFFICULTY) ?: AIDifficulty.NORMAL.name
+        val modPoolName = intent.getStringExtra(MainMenuActivity.EXTRA_MOD_POOL) ?: ModPool.NORMAL.name
+        val modCount = intent.getIntExtra(MainMenuActivity.EXTRA_MOD_COUNT, 1)
+
+        val gameMode = try { GameMode.valueOf(gameModeName) } catch (e: Exception) { GameMode.VS_AI }
+        val aiDifficulty = try { AIDifficulty.valueOf(aiDifficultyName) } catch (e: Exception) { AIDifficulty.NORMAL }
+        val modPool = try { ModPool.valueOf(modPoolName) } catch (e: Exception) { ModPool.NORMAL }
+
+        // Initialize ViewModel with configuration
+        viewModel.initialize(boardSize, gameMode, aiDifficulty, modPool, modCount)
 
         setupGameView()
         setupButtons()
@@ -202,6 +219,23 @@ class MainActivity : AppCompatActivity() {
                 binding.gameView.animateMutation {
                     binding.gameView.setBoard(viewModel.uiState.value.gameState.board)
                 }
+            }
+            is ModEffect.Slide,
+            is ModEffect.TileBreak,
+            is ModEffect.TileFreeze,
+            is ModEffect.TrapTriggered,
+            is ModEffect.MoveDecay,
+            is ModEffect.DoubleTurn,
+            is ModEffect.FogUpdate,
+            is ModEffect.DelayedReveal,
+            is ModEffect.WinConditionChange,
+            is ModEffect.AbilityUsed,
+            is ModEffect.RandomEffect,
+            is ModEffect.BoardResize,
+            is ModEffect.TileDrift,
+            is ModEffect.SubModActivated -> {
+                // Update board immediately for these effects
+                binding.gameView.setBoard(viewModel.uiState.value.gameState.board)
             }
         }
     }

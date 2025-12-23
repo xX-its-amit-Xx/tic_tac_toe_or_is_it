@@ -17,8 +17,11 @@ data class MatchConfig(
     val winCondition: Int = boardSize,
     val gameMode: GameMode = GameMode.VS_AI,
     val aiDifficulty: AIDifficulty = AIDifficulty.NORMAL,
-    val modPool: ModPool = ModPool.NORMAL
+    val modPool: ModPool = ModPool.NORMAL,
+    val stackedMods: List<IMod> = emptyList() // Additional mods that stack with the primary mod
 ) {
+    // Get all active mods (primary + stacked)
+    fun getAllMods(): List<IMod> = listOf(mod) + stackedMods
     companion object {
         const val DEFAULT_ACTIVATION_TURN_3X3 = 4
         const val DEFAULT_ACTIVATION_TURN_4X4 = 5
@@ -39,20 +42,31 @@ data class MatchConfig(
             activationTurn: Int = getDefaultActivationTurn(boardSize),
             gameMode: GameMode = GameMode.VS_AI,
             aiDifficulty: AIDifficulty = AIDifficulty.NORMAL,
-            modPool: ModPool = ModPool.NORMAL
+            modPool: ModPool = ModPool.NORMAL,
+            modCount: Int = 1 // How many mods to stack
         ): MatchConfig {
             val random = Random(seed)
-            val mod = ModFactory.createRandomMod(random, boardSize, modPool)
+            
+            // For stacking, create multiple unique mods
+            val allMods = if (modCount > 1) {
+                ModFactory.createStackedMods(modCount, random, boardSize, modPool)
+            } else {
+                listOf(ModFactory.createRandomMod(random, boardSize, modPool))
+            }
+            
+            val primaryMod = allMods.first()
+            val additionalMods = allMods.drop(1)
 
             return MatchConfig(
-                mod = mod,
+                mod = primaryMod,
                 modActivationTurn = activationTurn,
                 seed = seed,
                 boardSize = boardSize,
                 winCondition = winCondition,
                 gameMode = gameMode,
                 aiDifficulty = aiDifficulty,
-                modPool = modPool
+                modPool = modPool,
+                stackedMods = additionalMods
             )
         }
 
@@ -90,20 +104,30 @@ data class MatchConfig(
             boardSize: Int = 4,
             winCondition: Int = boardSize,
             modPool: ModPool = ModPool.NORMAL,
-            isHost: Boolean = true
+            isHost: Boolean = true,
+            modCount: Int = 1
         ): MatchConfig {
             val random = Random(seed)
-            val mod = ModFactory.createRandomMod(random, boardSize, modPool)
+            
+            val allMods = if (modCount > 1) {
+                ModFactory.createStackedMods(modCount, random, boardSize, modPool)
+            } else {
+                listOf(ModFactory.createRandomMod(random, boardSize, modPool))
+            }
+            
+            val primaryMod = allMods.first()
+            val additionalMods = allMods.drop(1)
 
             return MatchConfig(
-                mod = mod,
+                mod = primaryMod,
                 modActivationTurn = getDefaultActivationTurn(boardSize),
                 seed = seed,
                 humanPlayer = if (isHost) Player.X else Player.O,
                 boardSize = boardSize,
                 winCondition = winCondition,
                 gameMode = GameMode.BLUETOOTH_MULTIPLAYER,
-                modPool = modPool
+                modPool = modPool,
+                stackedMods = additionalMods
             )
         }
     }
