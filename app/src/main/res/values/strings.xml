@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tic Tac Toe… Or Is It?</string>
+    <string name="your_turn">Your Turn (X)</string>
+    <string name="ai_turn">AI Thinking…</string>
+    <string name="you_win">You Win!</string>
+    <string name="ai_wins">AI Wins!</string>
+    <string name="draw">Draw!</string>
+    <string name="play_again">Play Again</string>
+    <string name="turn_count">Turn %d</string>
+    <string name="mod_activating">Something\'s changing…</string>
+    <string name="mod_rotation">🔄 Board Rotation Active!</string>
+    <string name="mod_gravity">⬇️ Gravity Shift Active!</string>
+    <string name="mod_mutation">🧩 Board Mutation Active!</string>
+</resources>

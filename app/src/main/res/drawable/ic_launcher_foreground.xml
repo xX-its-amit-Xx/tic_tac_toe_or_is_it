@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Grid lines -->
+    <path
+        android:pathData="M40,30 L40,78"
+        android:strokeWidth="3"
+        android:strokeColor="#394867"/>
+    <path
+        android:pathData="M68,30 L68,78"
+        android:strokeWidth="3"
+        android:strokeColor="#394867"/>
+    <path
+        android:pathData="M26,46 L82,46"
+        android:strokeWidth="3"
+        android:strokeColor="#394867"/>
+    <path
+        android:pathData="M26,62 L82,62"
+        android:strokeWidth="3"
+        android:strokeColor="#394867"/>
+    
+    <!-- X mark -->
+    <path
+        android:pathData="M30,34 L36,40 M36,34 L30,40"
+        android:strokeWidth="3"
+        android:strokeColor="#E94560"
+        android:strokeLineCap="round"/>
+    
+    <!-- O mark -->
+    <path
+        android:pathData="M54,54 m-5,0 a5,5 0,1 1,10 0 a5,5 0,1 1,-10 0"
+        android:strokeWidth="3"
+        android:strokeColor="#4ECCA3"
+        android:fillColor="#00000000"/>
+    
+    <!-- Question mark (twist indicator) -->
+    <path
+        android:pathData="M72,66 Q76,66 76,70 Q76,74 72,74 L72,76"
+        android:strokeWidth="2"
+        android:strokeColor="#FFD460"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M72,79 L72,79.5"
+        android:strokeWidth="2"
+        android:strokeColor="#FFD460"
+        android:strokeLineCap="round"/>
+</vector>
