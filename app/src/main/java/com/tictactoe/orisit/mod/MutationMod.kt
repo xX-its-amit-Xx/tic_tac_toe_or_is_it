@@ -16,12 +16,14 @@ class MutationMod(
     val mutationType: MutationType,  // ROW_SWAP, COLUMN_SWAP, TILE_REMOVAL
     val frequency: Int,               // Every X turns (2 or 3)
     val count: Int,                   // How many affected (1 or 2)
-    private val seed: Long            // For deterministic mutations
+    private val seed: Long,           // For deterministic mutations
+    private val configuredBoardSize: Int = 3
 ) : BaseMod() {
 
     override val modId = "mutation"
     override val displayName = "Board Mutation"
     override val icon = "🧩"
+    override val category = ModCategory.SPATIAL
     override val description: String
         get() {
             val type = when (mutationType) {
@@ -53,17 +55,18 @@ class MutationMod(
     }
 
     private fun generateMutation(): MutationData {
+        val size = if (boardSize > 0) boardSize else configuredBoardSize
         return when (mutationType) {
             MutationType.ROW_SWAP -> {
-                val rows = (0..2).shuffled(mutationRandom).take(2)
+                val rows = (0 until size).shuffled(mutationRandom).take(2)
                 MutationData(mutationType, rows)
             }
             MutationType.COLUMN_SWAP -> {
-                val cols = (0..2).shuffled(mutationRandom).take(2)
+                val cols = (0 until size).shuffled(mutationRandom).take(2)
                 MutationData(mutationType, cols)
             }
             MutationType.TILE_REMOVAL -> {
-                val cells = (0..8).shuffled(mutationRandom).take(count)
+                val cells = (0 until size * size).shuffled(mutationRandom).take(count)
                 MutationData(mutationType, cells)
             }
         }
@@ -152,12 +155,13 @@ class MutationMod(
     }
 
     companion object {
-        fun randomize(random: Random = Random): MutationMod {
+        fun randomize(random: Random = Random, boardSize: Int = 3): MutationMod {
             return MutationMod(
                 mutationType = MutationType.entries[random.nextInt(3)],
-                frequency = random.nextInt(2, 4),  // 2 or 3
-                count = random.nextInt(1, 3),       // 1 or 2
-                seed = random.nextLong()
+                frequency = random.nextInt(2, 4),
+                count = random.nextInt(1, 3),
+                seed = random.nextLong(),
+                configuredBoardSize = boardSize
             )
         }
     }

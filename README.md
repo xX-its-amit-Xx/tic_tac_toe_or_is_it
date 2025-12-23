@@ -1,21 +1,42 @@
 # Tic Tac Toe... Or Is It? 🎮
 
-A mobile-first Android Tic-Tac-Toe variant where mid-game rule modifications ("Mods") activate to twist the classic gameplay.
+A mobile-first Android Tic-Tac-Toe variant where mid-game rule modifications ("Mods") activate to twist the classic gameplay. Now with **4×4 boards**, **15+ unique Mods**, and **Bluetooth multiplayer**!
 
 ## Game Concept
 
-> "I know Tic-Tac-Toe… wait, what just happened?"
+> "Every match teaches me a new way to think."
 
-Each match starts as classic 3×3 Tic-Tac-Toe, but after the first 4 turns, a hidden Mod activates with randomized parameters. Players must adapt to the changing rules to win!
+Each match starts with familiar Tic-Tac-Toe rules, but after the first few turns, a hidden Mod activates with randomized parameters. Players must adapt to the changing rules to win!
 
 ## Features
 
-- **Classic Tic-Tac-Toe base** - Familiar gameplay everyone knows
-- **3 Unique Mods** - Each with randomized parameters
-- **Simple AI Opponent** - Adapts to board changes
+- **Configurable Board Sizes** - 3×3 classic or 4×4 extended
+- **15+ Unique Mods** - Organized into 8 strategic categories
+- **Multiple Game Modes** - Play vs AI, Local, or Bluetooth multiplayer
+- **Heuristic AI** - Adapts to board size, mod effects, and strategic threats
 - **Smooth Animations** - Visual feedback for all mod effects
-- **Quick Sessions** - Under 2 minutes per match
+- **Quick Sessions** - Under 3 minutes per match
 - **Minimalist Design** - Clean, touch-first interface
+
+---
+
+## Game Modes
+
+| Mode | Description |
+|------|-------------|
+| **Play vs AI** | Single player against adaptive AI |
+| **Local Multiplayer** | Pass-and-play on one device |
+| **Bluetooth Multiplayer** | Peer-to-peer local wireless play |
+
+### Board Sizes
+
+- **3×3 Classic** - Win with 3 in a row
+- **4×4 Extended** - Win with 4 in a row (default)
+
+### Mod Pools
+
+- **Normal** - Balanced selection of mods
+- **Chaos** - All mods including experimental ones
 
 ---
 
@@ -24,55 +45,71 @@ Each match starts as classic 3×3 Tic-Tac-Toe, but after the first 4 turns, a hi
 ### How It Works
 
 1. Match starts with normal Tic-Tac-Toe rules
-2. First 4 turns play normally
-3. On turn 5, a random Mod activates with random parameters
+2. First N turns play normally (N=4 for 3×3, N=5 for 4×4)
+3. A random Mod activates with random parameters
 4. Parameters are revealed when the Mod activates
 5. Mod stays active until game end
 
-### Mod 1: 🔄 Board Rotation
+---
 
-**The entire board rotates during play.**
+## Mod Categories
 
-| Parameter | Values | Description |
-|-----------|--------|-------------|
-| `rotation_frequency` | 1, 2, or 3 | Rotates every X turns |
-| `rotation_direction` | CW / CCW | Clockwise or counter-clockwise |
-| `rotation_angle` | 90° / 180° | Degrees per rotation |
+### 🔁 SPATIAL MODS
 
-**Rules:**
-- All marks rotate with the board
-- Input maps to post-rotation coordinates
-- Rotation occurs after turn completion
+| Mod | Description | Parameters |
+|-----|-------------|------------|
+| **Dynamic Rotation** | Board or regions rotate | `frequency`, `angle`, `region`, `direction` |
+| **Gravity Shift** | Marks fall in a direction | `direction`, `strength`, `lock_after_fall` |
+| **Sliding Rows** | Rows/columns slide cyclically | `row_count`, `direction`, `interval` |
+| **Board Mutation** | Board layout changes | `mutation_type`, `frequency`, `count` |
 
-### Mod 2: ⬇️ Gravity Shift
+### 🧱 TILE BEHAVIOR MODS
 
-**Marks fall in a direction after placement.**
+| Mod | Description | Parameters |
+|-----|-------------|------------|
+| **Fragile Tiles** | Tiles break after X uses | `durability`, `break_behavior` |
+| **Frozen Tiles** | Tiles temporarily unplayable | `freeze_duration`, `freeze_pattern` |
+| **Trap Tiles** | Hidden effects on placement | `trap_density`, `trap_effect` |
 
-| Parameter | Values | Description |
-|-----------|--------|-------------|
-| `gravity_direction` | ↓ ↑ ← → | Direction marks fall |
-| `gravity_strength` | 1 or 2 | Triggers every X turns |
-| `lock_after_fall` | true/false | Whether marks settle permanently |
+### ⏱️ TEMPORAL MODS
 
-**Rules:**
-- Marks slide as far as possible in the gravity direction
-- Resolution order is deterministic
-- Can create or break winning lines!
+| Mod | Description | Parameters |
+|-----|-------------|------------|
+| **Move Decay** | Marks fade after X turns | `decay_time`, `decay_order` |
+| **Double Turn** | One turn grants two placements | `trigger_turn`, `cooldown` |
 
-### Mod 3: 🧩 Board Mutation
+### 🧠 INFORMATION MODS
 
-**The board layout itself changes.**
+| Mod | Description | Parameters |
+|-----|-------------|------------|
+| **Fog of War** | Some tiles hidden | `visibility_radius`, `reveal_timing` |
+| **Delayed Placement** | Marks appear after delay | `delay_turns` |
 
-| Parameter | Values | Description |
-|-----------|--------|-------------|
-| `mutation_type` | Row Swap, Column Swap, Tile Removal | How the board changes |
-| `mutation_frequency` | 2 or 3 | Mutates every X turns |
-| `mutation_count` | 1 or 2 | Number of elements affected |
+### ⚖️ RULE MUTATION MODS
 
-**Rules:**
-- Mutations are telegraphed 1 turn ahead (highlighted cells)
-- Removed tiles become unusable
-- Swapped tiles carry their marks
+| Mod | Description | Parameters |
+|-----|-------------|------------|
+| **Win Condition Shift** | Alternate win conditions | `alternate_condition`, `duration` |
+| **Asymmetric Powers** | Each player gets abilities | `ability_type`, `uses` |
+
+### 🎲 CONTROLLED CHAOS MODS
+
+| Mod | Description | Parameters |
+|-----|-------------|------------|
+| **Predictable Random** | Random effects previewed ahead | `effect_pool`, `preview_duration` |
+
+### 🧩 BOARD EVOLUTION MODS
+
+| Mod | Description | Parameters |
+|-----|-------------|------------|
+| **Board Growth/Shrink** | Board size changes | `new_size`, `duration` |
+| **Tile Drift** | Marks migrate toward edges/center | `drift_direction`, `strength` |
+
+### 🟣 META MODS
+
+| Mod | Description | Parameters |
+|-----|-------------|------------|
+| **Mod-on-Mod** | Secondary micro-mod activates | `secondary_mod_type`, `duration` |
 
 ---
 
@@ -82,24 +119,44 @@ Each match starts as classic 3×3 Tic-Tac-Toe, but after the first 4 turns, a hi
 com.tictactoe.orisit/
 ├── model/
 │   ├── Player.kt          # X, O, NONE enum
-│   ├── Cell.kt            # Board position (row, col)
-│   ├── Board.kt           # 3×3 grid with operations
-│   ├── GameState.kt       # Current game snapshot
+│   ├── Cell.kt            # Board position (row, col) - size-aware
+│   ├── Board.kt           # NxN grid with operations
+│   ├── GameState.kt       # Current game snapshot + mod states
 │   └── MatchConfig.kt     # Immutable match configuration
 ├── mod/
-│   ├── IMod.kt            # Mod interface + BaseMod
-│   ├── RotationMod.kt     # Board rotation implementation
-│   ├── GravityMod.kt      # Gravity shift implementation
-│   ├── MutationMod.kt     # Board mutation implementation
-│   └── ModFactory.kt      # Random mod generation
+│   ├── IMod.kt            # Mod interface + BaseMod + ModCategory
+│   ├── ModFactory.kt      # Random mod generation with pools
+│   ├── RotationMod.kt     # Dynamic rotation (full/partial)
+│   ├── GravityMod.kt      # Gravity shift
+│   ├── MutationMod.kt     # Board mutation
+│   ├── SlidingRowsMod.kt  # Sliding rows/columns
+│   ├── FragileTilesMod.kt # Fragile tiles
+│   ├── FrozenTilesMod.kt  # Frozen tiles
+│   ├── TrapTilesMod.kt    # Trap tiles
+│   ├── MoveDecayMod.kt    # Move decay
+│   ├── DoubleTurnMod.kt   # Double turn windows
+│   ├── FogOfWarMod.kt     # Fog of war
+│   ├── DelayedPlacementMod.kt  # Delayed placement
+│   ├── WinConditionShiftMod.kt # Win condition shift
+│   ├── AsymmetricPowersMod.kt  # Asymmetric powers
+│   ├── PredictableRandomMod.kt # Predictable random
+│   ├── BoardResizeMod.kt  # Board growth/shrink
+│   ├── TileDriftMod.kt    # Tile drift
+│   └── ModOnModMod.kt     # Mod-on-mod
 ├── ai/
-│   └── GameAI.kt          # Simple strategic AI
+│   └── GameAI.kt          # Heuristic AI with mod awareness
 ├── engine/
 │   └── GameEngine.kt      # Core game loop & state management
+├── bluetooth/
+│   ├── BluetoothManager.kt     # Bluetooth connection handling
+│   └── MatchSyncController.kt  # Turn-based synchronization
 └── ui/
-    ├── MainActivity.kt    # Main activity
-    ├── GameViewModel.kt   # UI state management
-    └── GameView.kt        # Custom board renderer
+    ├── MainMenuActivity.kt     # Main menu & mode selection
+    ├── BluetoothSetupActivity.kt # Bluetooth pairing UI
+    ├── HowToPlayActivity.kt    # Game instructions
+    ├── MainActivity.kt         # Game activity
+    ├── GameViewModel.kt        # UI state management
+    └── GameView.kt             # Custom board renderer (NxN)
 ```
 
 ### Key Design Principles
@@ -108,6 +165,46 @@ com.tictactoe.orisit/
 2. **Deterministic** - Same seed produces identical matches
 3. **Separation of Concerns** - Input → Simulation → Rendering
 4. **Extensible Mods** - Easy to add new mods via `IMod` interface
+5. **Board Size Agnostic** - All logic works with configurable board sizes
+
+---
+
+## Bluetooth Architecture
+
+### Overview
+
+Bluetooth multiplayer uses peer-to-peer RFCOMM connections with turn-based lockstep synchronization.
+
+```
+┌─────────────────┐         ┌─────────────────┐
+│     HOST        │◄───────►│     GUEST       │
+│  (Player X)     │ RFCOMM  │  (Player O)     │
+└─────────────────┘         └─────────────────┘
+        │                           │
+        ▼                           ▼
+┌─────────────────┐         ┌─────────────────┐
+│ BluetoothManager│         │ BluetoothManager│
+│ MatchSyncController       │ MatchSyncController
+└─────────────────┘         └─────────────────┘
+```
+
+### Connection Flow
+
+1. **Host** starts listening with `BluetoothManager.startHosting()`
+2. **Guest** connects via `BluetoothManager.connectToDevice()`
+3. Host sends `MatchConfig` (seed, board size, mod params)
+4. Both create identical game state from shared seed
+5. Moves are synchronized via `BluetoothMessage.Move`
+
+### Message Protocol
+
+| Message | Format | Purpose |
+|---------|--------|---------|
+| CONFIG | `CONFIG:seed:size:winCond:activationTurn` | Share match config |
+| MOVE | `MOVE:row:col:turnNumber` | Sync player moves |
+| END | `END:winner` | Game end notification |
+| READY | `READY` | Handshake signal |
+| PING | `PING` | Keep-alive |
 
 ---
 
@@ -118,32 +215,45 @@ com.tictactoe.orisit/
 ```kotlin
 class MyNewMod(
     val myParameter: Int,
-    // ... other parameters
+    private val configuredBoardSize: Int = 3
 ) : BaseMod() {
 
     override val modId = "my_new_mod"
     override val displayName = "My New Mod"
     override val icon = "🆕"
+    override val category = ModCategory.SPATIAL  // Choose appropriate category
     override val description get() = "Does something cool every $myParameter turns"
 
     override fun shouldTrigger(state: GameState): Boolean {
-        // Return true when effect should apply
+        if (!state.modActivated) return false
+        val turnsSince = turnsSinceActivation(state)
+        return turnsSince > 0 && turnsSince % myParameter == 0
     }
 
     override fun onTurnEnd(state: GameState): Pair<GameState, ModEffect?> {
         if (!shouldTrigger(state)) return Pair(state, null)
         
-        // Apply your transformation
+        // Apply transformation - use getBoardSize(state) for board operations
         val newBoard = transformBoard(state.board)
         val effect = ModEffect.MyEffect(/* params */)
         
-        return Pair(state.copy(board = newBoard), effect)
+        return Pair(state.copy(board = newBoard, lastModEffect = effect), effect)
+    }
+
+    override fun previewNextEffect(state: GameState): ModEffect? {
+        // Return preview for next turn if applicable
+        return null
+    }
+
+    override fun getParameterSummary(): String {
+        return "Every $myParameter turns"
     }
 
     companion object {
-        fun randomize(random: Random): MyNewMod {
+        fun randomize(random: Random = Random, boardSize: Int = 3): MyNewMod {
             return MyNewMod(
-                myParameter = random.nextInt(1, 4)
+                myParameter = random.nextInt(1, 4),
+                configuredBoardSize = boardSize
             )
         }
     }
@@ -155,15 +265,14 @@ class MyNewMod(
 ```kotlin
 // In ModFactory.kt
 enum class ModType {
-    ROTATION, GRAVITY, MUTATION, MY_NEW_MOD
+    // ... existing types ...
+    MY_NEW_MOD
 }
 
-fun createRandomMod(random: Random): IMod {
-    return when (ModType.entries[random.nextInt(ModType.entries.size)]) {
-        // ...existing cases...
-        ModType.MY_NEW_MOD -> MyNewMod.randomize(random)
-    }
-}
+// In createMod() function:
+ModType.MY_NEW_MOD -> MyNewMod.randomize(random, boardSize)
+
+// Add to appropriate mod pool list if needed
 ```
 
 ### Step 3: Add ModEffect (if needed)
@@ -171,12 +280,12 @@ fun createRandomMod(random: Random): IMod {
 ```kotlin
 // In GameState.kt
 sealed class ModEffect {
-    // ...existing effects...
+    // ... existing effects ...
     data class MyEffect(val params: Any) : ModEffect()
 }
 ```
 
-### Step 4: Handle Animation in GameView
+### Step 4: Handle Animation in UI (optional)
 
 ```kotlin
 // In MainActivity.kt - animateModEffect()
@@ -197,27 +306,18 @@ is ModEffect.MyEffect -> {
 - JDK 17+
 - Android SDK 34
 
-### Quick Start (Recommended)
+### Quick Start
 
 1. Open the project in Android Studio
-2. Let Android Studio sync Gradle (it will download the wrapper automatically)
+2. Let Android Studio sync Gradle
 3. Click **Run** or use `Shift+F10`
 
-### Build Debug APK (Command Line)
+### Build APK
 
 ```bash
-# First time: Let Gradle wrapper download itself
-./gradlew wrapper
-
-# Build the APK
 ./gradlew assembleDebug
-```
+# Output: app/build/outputs/apk/debug/app-debug.apk
 
-Output: `app/build/outputs/apk/debug/app-debug.apk`
-
-### Build Release APK
-
-```bash
 ./gradlew assembleRelease
 ```
 
@@ -239,6 +339,7 @@ Output: `app/build/outputs/apk/debug/app-debug.apk`
 | Architecture | MVVM |
 | UI Framework | View Binding |
 | Async | Kotlin Coroutines + Flow |
+| Bluetooth | RFCOMM (SPP) |
 
 ---
 
@@ -255,4 +356,4 @@ Built as a demonstration of:
 - Clean Android architecture
 - Deterministic game state management
 - Extensible mod frameworks
-# tic_tac_toe_or_is_it
+- Bluetooth peer-to-peer multiplayer

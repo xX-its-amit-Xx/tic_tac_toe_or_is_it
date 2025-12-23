@@ -18,6 +18,7 @@ class GravityMod(
     override val modId = "gravity"
     override val displayName = "Gravity Shift"
     override val icon = "⬇️"
+    override val category = ModCategory.SPATIAL
     override val description: String
         get() {
             val freq = if (strength == 1) "every turn" else "every 2 turns"
@@ -58,10 +59,10 @@ class GravityMod(
     }
 
     companion object {
-        fun randomize(random: Random = Random): GravityMod {
+        fun randomize(random: Random = Random, boardSize: Int = 3): GravityMod {
             return GravityMod(
                 direction = GravityDirection.entries[random.nextInt(4)],
-                strength = random.nextInt(1, 3),  // 1 or 2
+                strength = random.nextInt(1, 3),
                 lockAfterFall = random.nextBoolean()
             )
         }

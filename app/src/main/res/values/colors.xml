@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="background">#1A1A2E</color>
     <color name="background_dark">#1A1A2E</color>
     <color name="surface_dark">#16213E</color>
+    <color name="card_background">#222244</color>
     <color name="primary">#E94560</color>
     <color name="primary_variant">#C73E54</color>
     <color name="secondary">#0F3460</color>
@@ -13,10 +15,26 @@
     <color name="text_primary">#EAEAEA</color>
     <color name="text_secondary">#A0A0A0</color>
     
+    <!-- Legacy mod colors -->
     <color name="mod_rotation">#9B59B6</color>
     <color name="mod_gravity">#3498DB</color>
     <color name="mod_mutation">#E67E22</color>
     
+    <!-- Mod category colors -->
+    <color name="mod_spatial">#9B59B6</color>
+    <color name="mod_tile">#E67E22</color>
+    <color name="mod_temporal">#3498DB</color>
+    <color name="mod_information">#1ABC9C</color>
+    <color name="mod_rules">#E74C3C</color>
+    <color name="mod_chaos">#F39C12</color>
+    <color name="mod_evolution">#2ECC71</color>
+    <color name="mod_meta">#8E44AD</color>
+    
+    <!-- Tile state colors -->
     <color name="highlight_warning">#F39C12</color>
     <color name="tile_disabled">#2C2C3E</color>
+    <color name="tile_frozen">#5DADE2</color>
+    <color name="tile_trap">#C0392B</color>
+    <color name="tile_hidden">#1A1A2E</color>
+    <color name="tile_fragile">#F5B041</color>
 </resources>

@@ -1,7 +1,9 @@
 package com.tictactoe.orisit.engine
 
 import com.tictactoe.orisit.ai.GameAI
+import com.tictactoe.orisit.model.Board
 import com.tictactoe.orisit.model.Cell
+import com.tictactoe.orisit.model.GameMode
 import com.tictactoe.orisit.model.GameState
 import com.tictactoe.orisit.model.GameStatus
 import com.tictactoe.orisit.model.MatchConfig
@@ -14,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 /**
  * Core game engine managing state transitions.
  * Handles input, simulation, and mod effects.
+ * Supports configurable board sizes and multiple game modes.
  */
 class GameEngine {
 
@@ -24,14 +27,24 @@ class GameEngine {
     val events: StateFlow<GameEvent?> = _events.asStateFlow()
 
     private var matchConfig: MatchConfig? = null
-    private val ai = GameAI(Player.O)
+    private var ai: GameAI? = null
 
     /**
      * Start a new match with the given configuration.
      */
     fun startNewMatch(config: MatchConfig = MatchConfig.generate()) {
         matchConfig = config
-        _gameState.value = GameState()
+        
+        // Create AI if needed
+        ai = if (config.gameMode == GameMode.VS_AI) {
+            GameAI(config.humanPlayer.opponent(), config.aiDifficulty)
+        } else {
+            null
+        }
+        
+        // Create board with configured size
+        val initialBoard = config.createInitialBoard()
+        _gameState.value = GameState(board = initialBoard)
         _events.value = GameEvent.MatchStarted(config)
     }
 
@@ -95,11 +108,12 @@ class GameEngine {
     fun executeAITurn(): Cell? {
         val state = _gameState.value
         val config = matchConfig ?: return null
+        val currentAI = ai ?: return null
 
         if (state.isGameOver()) return null
         if (state.currentPlayer == config.humanPlayer) return null
 
-        val move = ai.selectMove(state) ?: return null
+        val move = currentAI.selectMove(state) ?: return null
 
         // Apply AI move
         val newBoard = state.board.set(move, state.currentPlayer)
@@ -156,7 +170,15 @@ class GameEngine {
     }
 
     private fun checkGameEnd(state: GameState): GameState {
-        val winner = state.board.checkWinner()
+        // Check with effective win condition (may be modified by mods)
+        val winCondition = state.getEffectiveWinCondition()
+        var winner = state.board.checkWinner(winCondition)
+        
+        // Also check for square wins if applicable
+        if (winner == Player.NONE && state.shouldCheckSquareWin()) {
+            winner = state.board.checkSquareWin()
+        }
+        
         return when {
             winner != Player.NONE -> state.setWinner(winner)
             state.board.isFull() -> state.copy(status = GameStatus.DRAW)

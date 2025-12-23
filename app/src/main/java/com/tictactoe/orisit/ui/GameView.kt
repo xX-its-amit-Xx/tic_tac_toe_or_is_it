@@ -31,14 +31,18 @@ class GameView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     private var board: Board = Board()
+    private var boardSize: Int = 3
     private var onCellClicked: ((Cell) -> Unit)? = null
     private var inputEnabled = true
 
     // Animation state
     private var rotationAngle = 0f
-    private var gravityOffset = FloatArray(9) { 0f }
+    private var gravityOffset = FloatArray(16) { 0f }
     private var highlightedCells = setOf<Int>()
     private var gravityIndicator: GravityDirection? = null
+    private var frozenCells = setOf<Int>()
+    private var hiddenCells = setOf<Int>()
+    private var trapCells = setOf<Int>()
 
     // Paints
     private val gridPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -92,7 +96,7 @@ class GameView @JvmOverloads constructor(
         super.onSizeChanged(w, h, oldw, oldh)
         val size = min(w, h)
         val padding = size * 0.08f
-        cellSize = (size - padding * 2) / 3f
+        cellSize = (size - padding * 2) / boardSize.toFloat()
         boardOffset = padding
     }
 
@@ -121,21 +125,21 @@ class GameView @JvmOverloads constructor(
 
     private fun drawGrid(canvas: Canvas) {
         // Vertical lines
-        for (i in 1..2) {
+        for (i in 1 until boardSize) {
             val x = boardOffset + i * cellSize
-            canvas.drawLine(x, boardOffset, x, boardOffset + 3 * cellSize, gridPaint)
+            canvas.drawLine(x, boardOffset, x, boardOffset + boardSize * cellSize, gridPaint)
         }
         // Horizontal lines
-        for (i in 1..2) {
+        for (i in 1 until boardSize) {
             val y = boardOffset + i * cellSize
-            canvas.drawLine(boardOffset, y, boardOffset + 3 * cellSize, y, gridPaint)
+            canvas.drawLine(boardOffset, y, boardOffset + boardSize * cellSize, y, gridPaint)
         }
     }
 
     private fun drawDisabledCells(canvas: Canvas) {
         for (idx in board.getDisabledCells()) {
-            val row = idx / 3
-            val col = idx % 3
+            val row = idx / boardSize
+            val col = idx % boardSize
             val rect = getCellRect(row, col)
             canvas.drawRect(rect, disabledPaint)
             
@@ -156,8 +160,8 @@ class GameView @JvmOverloads constructor(
 
     private fun drawHighlightedCells(canvas: Canvas) {
         for (idx in highlightedCells) {
-            val row = idx / 3
-            val col = idx % 3
+            val row = idx / boardSize
+            val col = idx % boardSize
             val rect = getCellRect(row, col)
             val inset = 4f
             rect.inset(inset, inset)
@@ -171,8 +175,8 @@ class GameView @JvmOverloads constructor(
             val player = cells[i]
             if (player == Player.NONE) continue
 
-            val row = i / 3
-            val col = i % 3
+            val row = i / boardSize
+            val col = i % boardSize
             val rect = getCellRect(row, col)
             
             // Apply gravity animation offset
@@ -213,7 +217,7 @@ class GameView @JvmOverloads constructor(
         val margin = 20f
         val centerX = width / 2f
         val centerY = height / 2f
-        val boardEnd = boardOffset + 3 * cellSize
+        val boardEnd = boardOffset + boardSize * cellSize
 
         val path = Path()
         when (dir) {
@@ -271,7 +275,7 @@ class GameView @JvmOverloads constructor(
         val col = ((x - boardOffset) / cellSize).toInt()
         val row = ((y - boardOffset) / cellSize).toInt()
         
-        if (row in 0..2 && col in 0..2) {
+        if (row in 0 until boardSize && col in 0 until boardSize) {
             return Cell(row, col)
         }
         return null
@@ -280,7 +284,27 @@ class GameView @JvmOverloads constructor(
     // Public API
 
     fun setBoard(newBoard: Board) {
+        val oldSize = boardSize
         board = newBoard
+        boardSize = newBoard.size
+        
+        // Resize gravity offset array if needed
+        if (boardSize * boardSize > gravityOffset.size) {
+            gravityOffset = FloatArray(boardSize * boardSize) { 0f }
+        }
+        
+        // Recalculate cell size if board size changed
+        if (oldSize != boardSize) {
+            val size = min(width, height)
+            val padding = size * 0.08f
+            cellSize = (size - padding * 2) / boardSize.toFloat()
+        }
+        
+        // Update frozen/hidden cells from board
+        frozenCells = newBoard.getFrozenCells()
+        hiddenCells = newBoard.getHiddenCells()
+        trapCells = newBoard.getTrapCells().keys
+        
         invalidate()
     }
 
